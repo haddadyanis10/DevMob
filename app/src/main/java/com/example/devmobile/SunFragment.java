@@ -82,15 +82,15 @@ public class SunFragment extends Fragment {
 
     private void fetchWeather(String ville){
         CurrentWeatherService currentweatherservice = RetrofitClient.getInstance().create(CurrentWeatherService.class);
-        currentweatherservice.getByCity(ville,"9387d7732a59e17de90e4c91d32b1936").enqueue(new Callback<ResponseWeather>() {
+        currentweatherservice.getByCity(ville,"9387d7732a59e17de90e4c91d32b1936","metric").enqueue(new Callback<ResponseWeather>() {
             @Override
             public void onResponse(Call<ResponseWeather> call, Response<ResponseWeather> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     //To get Temp
                     ResponseWeather meteo=response.body();
-                    meteoDesc.setText(meteo.getName());
+                    meteoDesc.setText(Float.toString(meteo.getMain().getTemp()));
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Oops something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Veuillez introduire le nom d'une ville", Toast.LENGTH_LONG).show();
                 }
             }
 

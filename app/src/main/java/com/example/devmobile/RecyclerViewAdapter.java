@@ -1,4 +1,4 @@
-/*package com.example.devmobile;
+package com.example.devmobile;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,62 +12,52 @@ import java.util.List;
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
-    private List<Student> studentList;
-    private OnItemClickListener listener;
+    private List<Weather> weatherList;
 
-    /*public interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
-    public RecyclerViewAdapter(List<Student> students, OnItemClickListener listener) {
-        this.studentList = students;
-        this.listener = listener;
+    public RecyclerViewAdapter(List<Weather> weatherList) {
+        this.weatherList = weatherList;
     }
 
     @Override
     public int getItemCount() {
-        return this.studentList.size();
+        return this.weatherList.size();
     }
 
-    public Student getItem(int position) {
-        return studentList.get(position);
+    public Weather getItem(int position) {
+        return weatherList.get(position);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_student, parent, false);
+                .inflate(R.layout.item_layout, parent, false);
         return new RecyclerViewAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Student student = studentList.get(position);
+        Weather weather = weatherList.get(position);
+        //holder.temp.setText(student.firstName);
+        holder.itemTemp.setText(Float.toString(weather.getMain().getTemp()));
+    }
 
-        holder.image.setImageResource(R.drawable.ic_person);
-        holder.firstName.setText(student.firstName);
-        holder.lastName.setText(student.lastName);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(v, position);
-            }
-        });
+    public void addWeatherList(List<Weather> weatherList) {
+        this.weatherList.addAll(weatherList);
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final View itemView;
-        final TextView firstName;
-        final TextView lastName;
-        final ImageView image;
+
+        final TextView itemTemp;
 
         ViewHolder(View view) {
             super(view);
-            itemView = view;
-            firstName = view.findViewById(R.id.student_firstname);
-            lastName = view.findViewById(R.id.student_lastname);
-            image = view.findViewById(R.id.student_image);
+            itemTemp = view.findViewById(R.id.item_temp);
         }
     }
-}*/
+
+}

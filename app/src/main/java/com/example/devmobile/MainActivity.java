@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -45,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
                 if (villeInput.getText() != null){
                     villeState = villeInput.getText().toString();
                     getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment(villeInput.getText().toString())).commit();
-
+                    //to close keyboard
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
                 }
                 /*else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment("grenoble")).commit();
