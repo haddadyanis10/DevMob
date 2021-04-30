@@ -1,11 +1,20 @@
 package com.example.devmobile;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 
@@ -41,5 +50,29 @@ public class Utils {
         liste.add(datePlus5);
 
         return liste;
+    }
+    public static ArrayList<String> parseJson(Activity act){
+        String json = null;
+        ArrayList<String> locList = new ArrayList<String>();
+        try {
+            InputStream is = act.getAssets().open("fav.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+
+            JSONObject obj = new JSONObject(json);
+            JSONArray favoris=obj.getJSONArray("favoris");
+
+            for (int i=0;i<favoris.length();i++){
+                JSONObject jsonObject=favoris.getJSONObject(i);
+                locList.add(jsonObject.toString());
+            }
+        } catch (IOException | JSONException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return locList;
     }
 }

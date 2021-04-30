@@ -1,12 +1,18 @@
 package com.example.devmobile;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +20,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class StarFragment extends Fragment {
+    
+    ArrayList<String> mesfavoris = new ArrayList<String>();
+    ListView listview;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,8 +33,11 @@ public class StarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public StarFragment() {
+    public StarFragment(String ville) {
         // Required empty public constructor
+        if(ville != null){
+            mesfavoris.add(ville);
+        }
     }
 
     /**
@@ -37,8 +49,8 @@ public class StarFragment extends Fragment {
      * @return A new instance of fragment StarFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StarFragment newInstance(String param1, String param2) {
-        StarFragment fragment = new StarFragment();
+    public StarFragment newInstance(String param1, String param2) {
+        StarFragment fragment = new StarFragment(null);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -48,6 +60,7 @@ public class StarFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //mesfavoris = ((MainActivity) getActivity()).read_json();
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -55,10 +68,16 @@ public class StarFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_star, container, false);
+        View v = inflater.inflate(R.layout.fragment_star, container, false);
+        this.listview = (ListView) v.findViewById(R.id.listView);
+        mesfavoris = ((MainActivity) getActivity()).readFavoris();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.item_layout_favoris,R.id.item_ville, mesfavoris);
+        this.listview.setAdapter(adapter);
+        return v;
     }
 }
