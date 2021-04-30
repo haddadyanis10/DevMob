@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +32,10 @@ public class SunFragment extends Fragment {
 
     String villeRecherche;
     TextView meteoDesc;
+    ResponseWeather m;
+    TextView temp;
+    TextView vent;
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -68,6 +78,7 @@ public class SunFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        
     }
 
     @Override
@@ -77,6 +88,8 @@ public class SunFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sun, container, false);
         this.meteoDesc = (TextView) v.findViewById(R.id.meteoDesc);
+        //this.temp= v.findViewById(R.id.temp);
+        //this.vent= v.findViewById(R.id.vent);
         return v;
     }
 
@@ -87,11 +100,15 @@ public class SunFragment extends Fragment {
             public void onResponse(Call<ResponseWeather> call, Response<ResponseWeather> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     //To get Temp
-                    ResponseWeather meteo=response.body();
-                    meteoDesc.setText(meteo.getName());
-                } else {
+                    m=response.body();
+                    //Log.d("response",response.toString());
+                    meteoDesc.setText(m.getName());
+                    Float tempx=m.getMain().getTemp();
+                    temp.setText(tempx.toString());
+                    //vent.setText( m.getWind().toString());
+
+                } else
                     Toast.makeText(getActivity().getApplicationContext(), "Oops something went wrong", Toast.LENGTH_LONG).show();
-                }
             }
 
             @Override
