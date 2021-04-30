@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -21,9 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
     public String villeState = "Grenoble";
     //favoris button
     private Button favoris;
+
+    //SharedPref
+    public static String SHARED_PREFS = "sharedPrefs";
+    public static final String FAVORIS = "favoris";
+    ArrayList<String> listePrefs= new ArrayList<String>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (villeInput.getText() != null){
-                    villeState = villeInput.getText().toString();
-                    new StarFragment(villeInput.getText().toString());
+                    listePrefs.add(villeInput.getText().toString());
+                    //writeFavoris(villeInput.getText().toString());
                 }
             }
         });
@@ -118,18 +130,21 @@ public class MainActivity extends AppCompatActivity {
         return json;
     }
 
-    public ArrayList<String> readFavoris(){
-    ArrayList<String> locList=new ArrayList<String>();
-        try {
-            JSONObject obj = new JSONObject(this.JsonDataFromAsset());
-            JSONArray favoris=obj.getJSONArray("favoris");
-            for (int i=0;i<favoris.length();i++){
-                String jsonObject = favoris.getString(i);
-                locList.add(jsonObject);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return locList;
+
+    //Shared pref
+    public void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Set<String> setPref = new HashSet<String>(this.listePrefs);
+        editor.putStringSet(FAVORIS,setPref);
+    }
+
+    public ArrayList<String> loadData(){
+        ArrayList<String> listeloc ;
+        Set<String> listSet;
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+       listSet = sharedPreferences.getStringSet(FAVORIS,null);
+       listeloc = new ArrayList<>(listSet);
+       return listeloc;
     }
 }

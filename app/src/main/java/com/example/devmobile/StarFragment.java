@@ -1,5 +1,6 @@
 package com.example.devmobile;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -9,8 +10,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,6 +28,8 @@ public class StarFragment extends Fragment {
     
     ArrayList<String> mesfavoris = new ArrayList<String>();
     ListView listview;
+
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,9 +82,16 @@ public class StarFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_star, container, false);
         this.listview = (ListView) v.findViewById(R.id.listView);
-        mesfavoris = ((MainActivity) getActivity()).readFavoris();
+        mesfavoris = ((MainActivity) getActivity()).listePrefs;
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.item_layout_favoris,R.id.item_ville, mesfavoris);
         this.listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView textView = (TextView) view.findViewById(R.id.item_ville);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment(textView.getText().toString())).commit();
+            }
+        });
         return v;
     }
 }
