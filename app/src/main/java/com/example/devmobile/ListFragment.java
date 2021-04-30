@@ -32,7 +32,7 @@ public class ListFragment extends Fragment {
 
     String villeRecherche;
     List<Weather> listeWeather;
-    TextView meteoDesc;
+    //TextView meteoDesc;
 
     RecyclerView recyclerView;
     RecyclerViewAdapter recyclerAdapter;
@@ -84,7 +84,7 @@ public class ListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-        this.meteoDesc = (TextView) v.findViewById(R.id.meteoDesc);
+        //this.meteoDesc = (TextView) v.findViewById(R.id.meteoDesc);
         //to use the recycler view
         recyclerView = v.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

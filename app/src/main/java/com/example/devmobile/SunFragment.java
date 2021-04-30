@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,8 +28,11 @@ import retrofit2.Response;
 public class SunFragment extends Fragment {
 
     String villeRecherche;
-    TextView meteoDesc;
+    TextView nomVille;
+    TextView description;
+    TextView temperature;
 
+    ImageView icon;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -76,19 +82,26 @@ public class SunFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sun, container, false);
-        this.meteoDesc = (TextView) v.findViewById(R.id.meteoDesc);
+        this.nomVille = (TextView) v.findViewById(R.id.nomVille);
+        this.icon = (ImageView) v.findViewById(R.id.icon);
+        this.description = (TextView) v.findViewById(R.id.description);
+        this.temperature = (TextView) v.findViewById(R.id.temperature);
         return v;
     }
 
     private void fetchWeather(String ville){
         CurrentWeatherService currentweatherservice = RetrofitClient.getInstance().create(CurrentWeatherService.class);
-        currentweatherservice.getByCity(ville,"9387d7732a59e17de90e4c91d32b1936","metric").enqueue(new Callback<ResponseWeather>() {
+        currentweatherservice.getByCity(ville,"9387d7732a59e17de90e4c91d32b1936","metric","fr").enqueue(new Callback<ResponseWeather>() {
             @Override
             public void onResponse(Call<ResponseWeather> call, Response<ResponseWeather> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     //To get Temp
                     ResponseWeather meteo=response.body();
-                    meteoDesc.setText(Float.toString(meteo.getMain().getTemp()));
+                    nomVille.setText(meteo.getName());
+                    String urlImage = "https://openweathermap.org/img/wn/"+meteo.getWeather().get(0).getIcon()+"@2x.png";
+                    Picasso.with(requireContext()).load(urlImage).into(icon);
+                    description.setText(meteo.getWeather().get(0).getDescription());
+                    temperature.setText(Float.toString(meteo.getMain().getTemp())+" C°");
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Veuillez introduire le nom d'une ville", Toast.LENGTH_LONG).show();
                 }
