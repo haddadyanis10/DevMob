@@ -78,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
                 }
-                /*else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment("grenoble")).commit();
-                }*/
             }
         });
 
@@ -88,12 +85,15 @@ public class MainActivity extends AppCompatActivity {
         favoris.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (villeInput.getText() != null){
+                if (villeInput.getText().toString() != ""){
                     listePrefs.add(villeInput.getText().toString());
                     saveData();
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
                     loadData();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Veuillez introduire le nom d'une ville", Toast.LENGTH_LONG).show();
                 }
             }
         });
