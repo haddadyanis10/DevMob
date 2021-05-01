@@ -31,8 +31,12 @@ public class SunFragment extends Fragment {
     TextView nomVille;
     TextView description;
     TextView temperature;
-
     ImageView icon;
+    TextView feels_like;
+    TextView temp_min;
+    TextView temp_max;
+    TextView pressure;
+    TextView humidity;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,6 +90,11 @@ public class SunFragment extends Fragment {
         this.icon = (ImageView) v.findViewById(R.id.icon);
         this.description = (TextView) v.findViewById(R.id.description);
         this.temperature = (TextView) v.findViewById(R.id.temperature);
+        this.feels_like = (TextView) v.findViewById(R.id.feelslike);
+        this.temp_min = (TextView) v.findViewById(R.id.temp_min);
+        this.temp_max = (TextView) v.findViewById(R.id.temp_max);
+        this.pressure = (TextView) v.findViewById(R.id.pression);
+        this.humidity = (TextView) v.findViewById(R.id.humidity);
         return v;
     }
 
@@ -99,9 +108,14 @@ public class SunFragment extends Fragment {
                     ResponseWeather meteo=response.body();
                     nomVille.setText(meteo.getName());
                     String urlImage = "https://openweathermap.org/img/wn/"+meteo.getWeather().get(0).getIcon()+"@2x.png";
-                    Picasso.with(requireContext()).load(urlImage).resize(200,200).into(icon);
+                    Picasso.with(requireContext()).load(urlImage).resize(150,150).into(icon);
                     description.setText(meteo.getWeather().get(0).getDescription());
                     temperature.setText(Float.toString(meteo.getMain().getTemp())+" C°");
+                    feels_like.setText(Float.toString(meteo.getMain().getFeelsLike())+" C°");
+                    temp_min.setText(Float.toString(meteo.getMain().getTemp_min())+" C°");
+                    temp_max.setText(Float.toString(meteo.getMain().getTemp_max())+" C°");
+                    pressure.setText(Float.toString(meteo.getMain().getPressure()));
+                    humidity.setText(Float.toString(meteo.getMain().getHumidity())+"%");
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Veuillez introduire le nom d'une ville", Toast.LENGTH_LONG).show();
                 }
