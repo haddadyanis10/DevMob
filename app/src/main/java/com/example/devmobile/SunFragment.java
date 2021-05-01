@@ -99,7 +99,7 @@ public class SunFragment extends Fragment {
                     ResponseWeather meteo=response.body();
                     nomVille.setText(meteo.getName());
                     String urlImage = "https://openweathermap.org/img/wn/"+meteo.getWeather().get(0).getIcon()+"@2x.png";
-                    Picasso.with(requireContext()).load(urlImage).into(icon);
+                    Picasso.with(requireContext()).load(urlImage).resize(200,200).into(icon);
                     description.setText(meteo.getWeather().get(0).getDescription());
                     temperature.setText(Float.toString(meteo.getMain().getTemp())+" C°");
                 } else {

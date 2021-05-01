@@ -1,15 +1,22 @@
 package com.example.devmobile;
 
+import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private List<Weather> weatherList;
+    Context context;
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -17,6 +24,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public RecyclerViewAdapter(List<Weather> weatherList) {
         this.weatherList = weatherList;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        context = recyclerView.getContext();
     }
 
     @Override
@@ -38,8 +51,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Weather weather = weatherList.get(position);
-        //holder.temp.setText(student.firstName);
+        String urlImage = "https://openweathermap.org/img/wn/"+weather.getWeather().get(0).getIcon()+"@2x.png";
         holder.itemTemp.setText(Float.toString(weather.getMain().getTemp()));
+        Picasso.with(context).load(urlImage).resize(200,200).into(holder.listeicon);
     }
 
     public void addWeatherList(List<Weather> weatherList) {
@@ -50,10 +64,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class ViewHolder extends RecyclerView.ViewHolder {
 
         final TextView itemTemp;
+        final ImageView listeicon;
 
         ViewHolder(View view) {
             super(view);
             itemTemp = view.findViewById(R.id.item_temp);
+            listeicon = view.findViewById(R.id.listeicon);
         }
     }
 
