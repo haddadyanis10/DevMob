@@ -98,7 +98,7 @@ public class ListFragment extends Fragment {
 
     private void fetchWeather(String ville){
         CurrentWeatherService currentweatherservice = RetrofitClient.getInstance().create(CurrentWeatherService.class);
-        currentweatherservice.getForFiveD(ville,"9387d7732a59e17de90e4c91d32b1936","metric").enqueue(new Callback<ResponseWeatherFiveD>() {
+        currentweatherservice.getForFiveD(ville,"9387d7732a59e17de90e4c91d32b1936","metric","fr").enqueue(new Callback<ResponseWeatherFiveD>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<ResponseWeatherFiveD> call, Response<ResponseWeatherFiveD> response) {

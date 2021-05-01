@@ -52,8 +52,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Weather weather = weatherList.get(position);
         String urlImage = "https://openweathermap.org/img/wn/"+weather.getWeather().get(0).getIcon()+"@2x.png";
-        holder.itemTemp.setText(Float.toString(weather.getMain().getTemp()));
+        holder.itemTemp.setText(Float.toString(weather.getMain().getTemp())+" C°");
         Picasso.with(context).load(urlImage).resize(200,200).into(holder.listeicon);
+        holder.date.setText(weather.getDt_txt().split("\\s+")[0]);
+        holder.description.setText(weather.getWeather().get(0).getDescription());
     }
 
     public void addWeatherList(List<Weather> weatherList) {
@@ -65,11 +67,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         final TextView itemTemp;
         final ImageView listeicon;
+        final TextView date;
+        final TextView description;
 
         ViewHolder(View view) {
             super(view);
             itemTemp = view.findViewById(R.id.item_temp);
             listeicon = view.findViewById(R.id.listeicon);
+            date = view.findViewById(R.id.date);
+            description = view.findViewById(R.id.description);
         }
     }
 
