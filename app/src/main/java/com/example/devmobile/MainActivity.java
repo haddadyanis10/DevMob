@@ -1,20 +1,35 @@
 package com.example.devmobile;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationPresenter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.JsonObject;
 
@@ -29,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -40,6 +56,7 @@ import retrofit2.Retrofit;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
+    private TextView localisation;
     private EditText villeInput;
     //valider button
     private Button submit;
@@ -50,32 +67,35 @@ public class MainActivity extends AppCompatActivity {
     //SharedPref
     public static String SHARED_PREFS = "sharedPrefs";
     public static final String FAVORIS = "favoris";
-    ArrayList<String> listePrefs= new ArrayList<String>();
+    ArrayList<String> listePrefs = new ArrayList<String>();
 
+    private LocationManager locationManager;
+    String fournisseur;
 
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bottomNavigationView=findViewById(R.id.bottomNav);
+        bottomNavigationView = findViewById(R.id.bottomNav);
         bottomNavigationView.setOnNavigationItemSelectedListener(bottomNavMethod);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment(villeState)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new SunFragment(villeState)).commit();
 
 
         //to load favoris
         loadData();
-
+        this.locationManager = null;
+        this.fournisseur = null;
         this.villeInput = (EditText) findViewById(R.id.inputCity);
         this.submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (villeInput.getText() != null){
+                if (villeInput.getText() != null) {
                     villeState = villeInput.getText().toString();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment(villeInput.getText().toString())).commit();
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.container, new SunFragment(villeInput.getText().toString())).commit();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
                 }
                 /*else {
@@ -88,22 +108,26 @@ public class MainActivity extends AppCompatActivity {
         favoris.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (villeInput.getText() != null){
+                if (villeInput.getText() != null) {
                     listePrefs.add(villeInput.getText().toString());
                     saveData();
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
                     loadData();
                 }
             }
         });
 
+        initializeLocation();
+
     }
+
     private BottomNavigationView.OnNavigationItemSelectedListener bottomNavMethod = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
+
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Fragment fragment = null;
-            switch (menuItem.getItemId()){
+            switch (menuItem.getItemId()) {
                 case R.id.sun:
                     fragment = new SunFragment(villeState);
                     break;
@@ -114,13 +138,13 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new StarFragment(null);
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
             return true;
         }
     };
 
 
-    private String JsonDataFromAsset(){
+    private String JsonDataFromAsset() {
         String json = null;
         try {
             InputStream is = getAssets().open("fav.json");
@@ -129,8 +153,7 @@ public class MainActivity extends AppCompatActivity {
             is.read(buffer);
             is.close();
             json = new String(buffer, "UTF-8");
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
@@ -139,20 +162,84 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Shared pref
-    public void saveData(){
+    public void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Set<String> setPref = new HashSet<String>(this.listePrefs);
-        editor.putStringSet(FAVORIS,setPref);
+        editor.putStringSet(FAVORIS, setPref);
         editor.commit();
     }
 
-    public void loadData(){
-        ArrayList<String> listeloc ;
+    public void loadData() {
+        ArrayList<String> listeloc;
         Set<String> listSet;
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         listSet = sharedPreferences.getStringSet(FAVORIS, Collections.emptySet());
         listeloc = new ArrayList<>(listSet);
         this.listePrefs = listeloc;
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        if(requestCode == 1000){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                initializeLocation();
+            }
+            else{
+                Toast.makeText(this,"Utilisation de la localisation impossible",Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        }
+        if(requestCode == 50){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                initializeLocation();
+            }
+            else{
+                Toast.makeText(this,"Utilisation d'internet impossible",Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        }
+    }
+
+
+
+    @SuppressLint("NewApi")
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void initializeLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ) {
+
+            if(shouldShowRequestPermissionRationale(Manifest.permission.INTERNET)){
+                Toast.makeText(this,"Accès internet requis",Toast.LENGTH_SHORT).show();
+            }
+            requestPermissions(new String[]{Manifest.permission.INTERNET},50);
+
+
+        }
+
+        if (this.locationManager == null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)){
+                   Toast.makeText(this,"Accès à la localisation requise",Toast.LENGTH_SHORT).show();
+               }
+               requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1000);
+
+
+            }
+
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location localisation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+
+
+
+
+        }
+
+    }
+
+
 }
