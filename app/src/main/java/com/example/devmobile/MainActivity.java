@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.container,new SunFragment(villeState)).commit();
 
 
+        //to load favoris
+        loadData();
+
         this.villeInput = (EditText) findViewById(R.id.inputCity);
         this.submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +90,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (villeInput.getText() != null){
                     listePrefs.add(villeInput.getText().toString());
-                    //writeFavoris(villeInput.getText().toString());
+                    saveData();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(villeInput.getWindowToken(), 0);
+                    loadData();
                 }
             }
         });
@@ -137,14 +144,15 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Set<String> setPref = new HashSet<String>(this.listePrefs);
         editor.putStringSet(FAVORIS,setPref);
+        editor.commit();
     }
 
-    public ArrayList<String> loadData(){
+    public void loadData(){
         ArrayList<String> listeloc ;
         Set<String> listSet;
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-       listSet = sharedPreferences.getStringSet(FAVORIS,null);
-       listeloc = new ArrayList<>(listSet);
-       return listeloc;
+        listSet = sharedPreferences.getStringSet(FAVORIS, Collections.emptySet());
+        listeloc = new ArrayList<>(listSet);
+        this.listePrefs = listeloc;
     }
 }

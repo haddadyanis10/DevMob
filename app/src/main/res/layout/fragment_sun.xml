@@ -53,11 +53,11 @@
         android:layout_marginLeft="25dp"
         />
 
-    <TableLayout
+    <!--<TableLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         app:layout_constraintTop_toEndOf="@id/description"
         app:layout_constraintStart_toStartOf="parent"
         >
-    </TableLayout>
+    </TableLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
