@@ -12,4 +12,9 @@
         android:id="@+id/star"
         android:title="Favoris"
         android:icon="@drawable/ic_star"/>
+
+    <item
+        android:id="@+id/geolocalisation"
+        android:title="géolocalisation"
+        android:icon="@drawable/ic_baseline_gps_fixed_24"/>
 </menu>
