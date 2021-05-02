@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText villeInput;
     //valider button
     private Button submit;
-    public String villeState = "";
+    public String villeState = "Grenoble";
     //favoris button
     private Button favoris;
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         favoris.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (villeInput.getText().toString() != ""){
+                if (!villeInput.getText().toString().equals("")){
                     listePrefs.add(villeInput.getText().toString());
                     saveData();
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
