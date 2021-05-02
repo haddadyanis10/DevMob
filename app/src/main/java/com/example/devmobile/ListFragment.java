@@ -106,7 +106,6 @@ public class ListFragment extends Fragment {
                     ResponseWeatherFiveD meteo=response.body();
                     listeWeather = meteo.getListWeatherFiveDays();
                     recyclerAdapter.addWeatherList(listeWeather);
-
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Veuillez introduire le nom d'une ville", Toast.LENGTH_LONG).show();
                 }
