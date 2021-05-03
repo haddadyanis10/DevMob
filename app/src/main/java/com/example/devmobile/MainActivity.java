@@ -117,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        //check permission
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            //when permission granted
+            getLocation();
+        }
+        else{
+            //when permission denied
+            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
+        }
     }
     private BottomNavigationView.OnNavigationItemSelectedListener bottomNavMethod = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -133,16 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new StarFragment(null);
                     break;
                 case R.id.geolocalisation:
-                    //check permission
-                    if(ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                        //when permission granted
-                        getLocation();
-                        fragment = new SunFragment(villeGeoLocalisation);
-                    }
-                    else{
-                        //when permission denied
-                        ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
-                    }
+                    fragment = new SunFragment(villeGeoLocalisation);
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
