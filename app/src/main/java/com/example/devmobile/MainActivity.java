@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText villeInput;
     //valider button
     private Button submit;
-    public String villeState = "Grenoble";
+    public String villeState = "";
     //favoris button
     private Button favoris;
 
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_DevMobile);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new StarFragment(null);
                     break;
                 case R.id.geolocalisation:
+                    Log.d("Localisation","c'est ma ville:"+villeGeoLocalisation);
                     fragment = new SunFragment(villeGeoLocalisation);
                     break;
             }
@@ -184,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
                         //Initialize adress List
                         List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
                         getCityName(String.valueOf(addresses.get(0).getLatitude()),String.valueOf(addresses.get(0).getLongitude()));
+                        Log.d("Lat et Lon","latitude:"+addresses.get(0).getLatitude()+"longitude:"+addresses.get(0).getLongitude());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
